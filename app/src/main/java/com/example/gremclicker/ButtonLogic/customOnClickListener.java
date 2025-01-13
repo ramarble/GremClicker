@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.gremclicker.Currency.Currency;
-import com.example.gremclicker.MainActivity;
 
 class customOnClickListener implements View.OnTouchListener {
     static int currentFrame = 0;
