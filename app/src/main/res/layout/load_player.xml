@@ -7,9 +7,9 @@
     android:layout_height="match_parent"
     android:padding="8dp">
 
-    <TableLayout
+    <ListView
         android:id="@+id/selectUserLayout"
-        android:layout_width="300dp"
+        android:layout_width="380dp"
         android:layout_height="580dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"

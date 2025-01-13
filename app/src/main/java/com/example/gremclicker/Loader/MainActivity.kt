@@ -4,21 +4,17 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.TypedValue
-import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup.LayoutParams
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ListView
 import android.widget.TableLayout
-import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.children
 import com.example.gremclicker.Currency.Currency.Companion.currency
 import com.example.gremclicker.R
 import com.example.gremclicker.SQLite.DB_User
@@ -56,48 +52,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loadPlayerList(db: SQLiteDatabase) {
-        var tb = findViewById<TableLayout>(R.id.selectUserLayout)
-        var list: ArrayList<DB_User> = findUser(db)
-        addRowToTable(tb, "ID", "NOMBRE", "PUNTOS")
-        for (d in list) {
-            addRowToTable(tb, d.id.toString(), d.name, d.grems.toString())
-        }
+        var tb = findViewById<ListView>(R.id.selectUserLayout)
+        var list: Array<DB_User> = returnUserArray(db)
+        var v : ArrayAdapter<DB_User> = ArrayAdapter(this,android.R.layout.simple_list_item_1, list)
+        tb.setOnItemClickListener()
+        AdapterView.OnItemClickListener( )
+        tb.setAdapter(v)
     }
 
     fun addRowToTable(tb: TableLayout, id: String, name: String, grems: String) {
-        var row = TableRow(this)
-        var textId = TextView(this)
-        var textName = TextView(this)
-        var textGrems = TextView(this)
-        textId.gravity = Gravity.LEFT
-        textName.gravity = Gravity.CENTER
-        textGrems.gravity = Gravity.RIGHT
-        textId.text = id
-
-        row.setPaddingRelative(0,10,0,10)
-        textId.setTextSize(TypedValue.COMPLEX_UNIT_SP,18F)
-        textName.setTextSize(TypedValue.COMPLEX_UNIT_SP,18F)
-        textName.textAlignment = View.TEXT_ALIGNMENT_TEXT_START
-        textGrems.setTextSize(TypedValue.COMPLEX_UNIT_SP,18F)
-        textName.text = name
-        textGrems.text = grems
-        row.addView(textId)
-        row.addView(textName)
-        row.addView(textGrems)
-
-        var rowBlack = TableRow(this)
-        rowBlack.setBackgroundColor(Color.BLACK)
-        rowBlack.setPadding(0,0,0,3)
-
-        row.setOnClickListener {
-            Toast.makeText(this, (row.children.first() as TextView).text, Toast.LENGTH_SHORT).show()
-        }
-        tb.addView(row, TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
-        tb.addView(rowBlack, TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
 
     }
 
-    fun findUser(db: SQLiteDatabase): ArrayList<DB_User> {
+    fun returnUserArray(db: SQLiteDatabase): Array<DB_User> {
         var c: Cursor = db.rawQuery("SELECT * from ${Database.TABLE_NAME}", null)
         var list: ArrayList<DB_User> = ArrayList()
         if (c.moveToFirst()) {
@@ -107,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
         c.close()
 
-        return list
+        return list.toTypedArray()
     }
 
     fun fakeFrameUpdate() {
