@@ -1,57 +1,69 @@
 package com.example.gremclicker.ViewActivities
 
-import android.animation.ObjectAnimator
 import android.app.Activity
 import android.os.Bundle
-import android.view.ViewGroup.LayoutParams
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.gremclicker.Currency.Currency
 import com.example.gremclicker.Currency.Currency.Companion.currency
 import com.example.gremclicker.R
+import com.example.gremclicker.Logic.*
 import com.example.gremclicker.SQLite.DB_User
 import com.example.gremclicker.SQLite.Database
-import com.example.gremclicker.ButtonLogic.*
+import java.security.SecureRandom
 
 class GameScreen: AppCompatActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.grem_button_main)
+        val User: DB_User = getIntent().getSerializableExtra("User") as DB_User
+        val dbLoader = Database(baseContext)
+
+        currency = User.grems
+
         val animatedGrem = findViewById<ImageView?>(R.id.animatedGrem)
-        val gremButton = GremButton(animatedGrem);
-        fakeFrameUpdate()
-        val Object = getIntent().getSerializableExtra("User")
-        Toast.makeText(this, Object.toString(), Toast.LENGTH_SHORT).show()
-        //createOtomo()
+        GremButton(animatedGrem);
+
+        var CURRENT_POINTS: TextView = findViewById(R.id.currencyDisplay)
+        fakeFrameUpdate(CURRENT_POINTS)
+
+
+        Toast.makeText(this, User.toString(), Toast.LENGTH_SHORT).show()
+        randomOtomoRain(8000)
+
+        var saveButton: TextView = this.findViewById(R.id.buttonSaveData)
+        saveButton.setTextSize(10f)
+
+        saveButton.setOnClickListener{
+            dbLoader.UPDATE_USER(User.name, Integer.parseInt(CURRENT_POINTS.text.toString()), dbLoader.writableDatabase)
+            Toast.makeText(this, "idk?", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
-fun fakeFrameUpdate() {
-    Thread(Runnable {
-        while (true) {
-            runOnUiThread({
-                findViewById<TextView>(R.id.currencyDisplay).text = currency.toString()
-            })
-            Thread.sleep(20)
-        }
-    }).start()
-}
+    fun fakeFrameUpdate(points: TextView) {
+        Thread(Runnable {
+            while (true) {
+                runOnUiThread {
+                    points.text = currency.toString()
+                }
+                Thread.sleep(20)
+            }
+        }).start()
+    }
 
-fun createOtomo() {
-
-    var iv = ImageView(this)
-    var lp = LayoutParams(200, LayoutParams.MATCH_PARENT)
-    iv.setImageResource(R.drawable.otomo2);
-
-    addContentView(iv, lp);
-    var animation = ObjectAnimator.ofFloat(iv, "translationY", 13000f).setDuration(10000)
-    var rot = ObjectAnimator.ofFloat(iv, "rotation", 0f, 360f)
-    rot.repeatCount = 1000;
-    rot.start()
-    animation.start()
-    iv.setOnClickListener { animation.cancel(); rot.cancel() }
-
-
-}
+    fun randomOtomoRain(int: Int) {
+        Thread(Runnable {
+            while (true) {
+                runOnUiThread {
+                    FallingOtomo.createFallingOtomo(this)
+                }
+                Thread.sleep(SecureRandom().nextInt(int).toLong())
+            }
+        }).start()
+    }
 }

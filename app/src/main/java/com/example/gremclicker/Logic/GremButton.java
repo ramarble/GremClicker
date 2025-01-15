@@ -1,8 +1,7 @@
-package com.example.gremclicker.ButtonLogic;
+package com.example.gremclicker.Logic;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.AnimationDrawable;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.example.gremclicker.R;
@@ -16,7 +15,6 @@ public class GremButton {
         gremAnimation = (AnimationDrawable) gremImage.getBackground();
         customOnClickListener customClick = new customOnClickListener();
         gremImage.setOnTouchListener(customClick);
-
 
     }
 }

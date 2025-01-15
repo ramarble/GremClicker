@@ -1,28 +1,38 @@
 package com.example.gremclicker.ViewActivities
 import android.app.Activity
 import android.database.SQLException
+import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import androidx.appcompat.app.AppCompatActivity
+import com.example.gremclicker.Logic.customOnItemClickListener
 import com.example.gremclicker.R
 import com.example.gremclicker.SQLite.DB_User
 import com.example.gremclicker.SQLite.Database
 
-class LoadUserScreen(a: Activity, dbLoader: Database){
+class LoadUserScreen() : AppCompatActivity(){
 
-    var a: Activity = a;
-    var dbLoader: Database = dbLoader;
-    fun main() {
-        a.setContentView(R.layout.load_player)
-        loadPlayerList(a, dbLoader)
+    var dbLoader = Database(this);
 
-        a.findViewById<Button>(R.id.buttonGoBack).setOnClickListener({
-            LoginScreen(a).main()
+    override fun onResume() {
+        loadPlayerList(this, dbLoader)
+        super.onResume()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.load_player)
+        loadPlayerList(this, dbLoader)
+
+        findViewById<Button>(R.id.buttonGoBack).setOnClickListener({
+            LoginScreen(this).main()
         })
 
-        a.findViewById<Button>(R.id.buttonClearDatabase).setOnClickListener({
+        findViewById<Button>(R.id.buttonClearDatabase).setOnClickListener({
             dbLoader.CLEAR_DATABASE(dbLoader.writableDatabase)
-            LoginScreen(a).main()
+            dbLoader.RECREATE_DATABASE(dbLoader.writableDatabase)
+            LoginScreen(this).main()
         })
     }
 
@@ -33,9 +43,9 @@ class LoadUserScreen(a: Activity, dbLoader: Database){
         var list: Array<DB_User> = returnUserArray(db)
         var v: ArrayAdapter<DB_User>
         if (!list.isEmpty()) {
-            tb.onItemClickListener = com.example.gremclicker.ButtonLogic.customOnItemClickListener(a, db)
+            tb.onItemClickListener = customOnItemClickListener(a, db, list)
         } else {
-            var err = DB_User(-1, "No user found!", -1)
+            var err = DB_User("No user found!", -1, -1)
             list = Array(1) {err}
         }
         v = ArrayAdapter(a.baseContext, android.R.layout.simple_list_item_1, list)
@@ -48,7 +58,7 @@ class LoadUserScreen(a: Activity, dbLoader: Database){
             var c = dbLoader.GET_ALL_USERS(dbLoader.writableDatabase)
             if (c.moveToFirst()) {
                 do {
-                    list.add(DB_User(c.getInt(0), c.getString(1), c.getInt(2)))
+                    list.add(DB_User(c.getString(0), c.getInt(1), 3))
                 } while (c.moveToNext());
             }
             c.close()

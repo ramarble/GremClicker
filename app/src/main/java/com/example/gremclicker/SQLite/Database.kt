@@ -5,7 +5,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.widget.Toast
 
 class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
         companion object {
@@ -15,29 +14,38 @@ class Database(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         }
 
         private val SQL_CREATE_ENTRIES =
-                "CREATE TABLE IF NOT EXISTS $TABLE_NAME (" +
-                        "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        "NAME TEXT," +
-                        "GREMS INTEGER)"
+                "CREATE TABLE IF NOT EXISTS $TABLE_NAME ("+
+                        "NAME TEXT PRIMARY KEY NOT NULL," +
+                        "GREMS INTEGER," +
+                        "UPGRADE_BITMASK INTEGER)"
 
         private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS $TABLE_NAME"
 
-        fun newUser(name: String, db: SQLiteDatabase) {
+        fun CREATE_NEW_USER(name: String, db: SQLiteDatabase) : Long{
                 db.execSQL(SQL_CREATE_ENTRIES)
                 var cv = ContentValues()
                 cv.put("NAME", name)
                 cv.put("GREMS", 0)
-                db.insert("$TABLE_NAME", null, cv);
+                return db.insert("$TABLE_NAME", null, cv);
+        }
+
+        fun UPDATE_USER(name: String, Grems: Int, db:SQLiteDatabase) {
+                db.execSQL("UPDATE $TABLE_NAME SET GREMS=$Grems WHERE NAME = $name")
         }
 
         fun CLEAR_DATABASE(db:SQLiteDatabase) {
                 db.execSQL(SQL_DELETE_ENTRIES)
         }
 
-        fun GET_SINGLE_USER(db:SQLiteDatabase, int: Int) : DB_User{
-                var c = db.rawQuery("SELECT * FROM ${Database.TABLE_NAME} WHERE ID = ($int+1)", null)
+        fun RECREATE_DATABASE(db:SQLiteDatabase) {
+                db.execSQL(SQL_CREATE_ENTRIES)
+        }
+
+        fun GET_SINGLE_USER(db:SQLiteDatabase, str: String) : DB_User{
+                var c = db.rawQuery("SELECT * FROM ${Database.TABLE_NAME} WHERE NAME = \"$str\"", null)
                 c.moveToFirst()
-                return DB_User(c.getInt(0), c.getString(1), c.getInt(2))
+                c.close()
+                return DB_User(c.getString(0), c.getInt(1),3)
         }
 
         fun GET_ALL_USERS(db:SQLiteDatabase) : Cursor{

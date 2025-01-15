@@ -1,4 +1,4 @@
-package com.example.gremclicker.ButtonLogic;
+package com.example.gremclicker.Logic;
 
 
 import android.graphics.Bitmap;
