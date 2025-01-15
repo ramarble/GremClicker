@@ -1,4 +1,4 @@
-package com.example.gremclicker.Logic;
+package com.example.gremclicker.CustomListeners;
 
 import android.app.Activity;
 import android.content.Intent;

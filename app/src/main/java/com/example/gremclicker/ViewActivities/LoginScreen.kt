@@ -2,10 +2,9 @@ package com.example.gremclicker.ViewActivities
 
 import android.app.Activity
 import android.content.Intent
-import android.database.sqlite.SQLiteConstraintException
+import android.os.Bundle
 import android.text.InputType
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -19,44 +18,44 @@ import com.example.gremclicker.SQLite.DB_User
 import com.example.gremclicker.SQLite.Database
 
 
-class LoginScreen(a: Activity){
+class LoginScreen : AppCompatActivity() {
 
-    var act: Activity = a;
-    val dbLoader = Database(a.baseContext)
+    val dbLoader = Database(this)
+    override fun onCreate(savedInstanceState: Bundle?) {
 
-    fun main() {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.login)
+        dbLoader.CREATE_DATABASE_IF_NOT_EXISTS(dbLoader.writableDatabase)
 
-        act.setContentView(R.layout.login)
-        dbLoader.RECREATE_DATABASE(dbLoader.writableDatabase)
-
-        var text: TextView = act.findViewById(R.id.gremClickerTitle)
+        val text: TextView = findViewById(R.id.gremClickerTitle)
         text.setTextSize(30f)
 
-        //DEBUG TO TEST THAT THE BOOLEAN ARRAY WORKS
+        //DEBUG TO TEST THAT THE BOOLEAN ARRAY WORKS. UNIMPLEMENTED.
         var v: BooleanArray = MathClass.returnUpgradesAsBooleanArray(61)
 
-        val newUserButton = act.findViewById<Button>(R.id.newUserButton)
+        val newUserButton = findViewById<Button>(R.id.newUserButton)
         newUserButton.setOnClickListener {
-            newUser(act,newUserButton)
+            newUser(this,newUserButton)
         }
 
-        val LoadPlayerButton = act.findViewById<Button>(R.id.loadplayerbutton)
+        val LoadPlayerButton = findViewById<Button>(R.id.loadplayerbutton)
         LoadPlayerButton.setOnClickListener {
-            //DO THIS WITH AN INTENT
-            var intent = Intent(act.baseContext, LoadUserScreen::class.java)
-            act.startActivity(intent)
+
+            val intent = Intent(baseContext, LoadUserScreen::class.java)
+            startActivity(intent)
 
         }
+
     }
 
     fun newUser(act: Activity, b: Button) {
         b.text = "Start Game"
         //delete the clicklistener asap to avoid issues with race conditions
         b.setOnClickListener( null)
-        var newTextBox = createTextBox()
+        val newTextBox = createTextBox()
         //I just took this code from somewhere else
         newTextBox.requestFocus()
-        val inputMethodManager: InputMethodManager = act.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager: InputMethodManager = act.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.showSoftInput(newTextBox, 0)
 
         b.setOnClickListener {
@@ -65,46 +64,45 @@ class LoginScreen(a: Activity){
 
     }
     fun createTextBox() : EditText {
-        var newTextBox = EditText(act)
+        val newTextBox = EditText(this)
         newTextBox.inputType = InputType.TYPE_CLASS_TEXT
         newTextBox.minimumWidth = 300
-        newTextBox.width = 300;
+        newTextBox.width = 300
 
-        var metrics = DisplayMetrics()
-        act.windowManager.defaultDisplay.getMetrics(metrics)
+        val metrics = DisplayMetrics()
+        this.windowManager.defaultDisplay.getMetrics(metrics)
         val params = RelativeLayout.LayoutParams(
             RelativeLayout.LayoutParams.WRAP_CONTENT,
             RelativeLayout.LayoutParams.WRAP_CONTENT
         )
         newTextBox.x = ((metrics.widthPixels/2)- 150f)
         newTextBox.y = ((metrics.heightPixels/2) - 400f)
-        act.addContentView(newTextBox,params)
+        this.addContentView(newTextBox,params)
 
         return newTextBox
     }
 
     fun userSendConfirmation(tb: EditText) {
         if (tb.text.isNullOrEmpty()) {
-            Toast.makeText(act, "User can't be empty!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "User can't be empty!", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (dbLoader.CREATE_NEW_USER(tb.text.toString(), dbLoader.writableDatabase) == -1L) {
-            Toast.makeText(act, "User already exists!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "User already exists!", Toast.LENGTH_SHORT).show()
             return
         }
-        var user: DB_User = dbLoader.GET_SINGLE_USER(dbLoader.writableDatabase, tb.text.toString())
+        val user: DB_User = dbLoader.GET_SINGLE_USER(dbLoader.writableDatabase, tb.text.toString())
 
-        val intent = Intent(act.baseContext, GameScreen::class.java)
+        val intent = Intent(this.baseContext, GameScreen::class.java)
         //Has to be serializable to be sent over!
         intent.putExtra(
             "User",
             user
         )
 
-        Toast.makeText(act,"User created successfully", Toast.LENGTH_SHORT).show()
-
-        act.startActivity(intent)
+        Toast.makeText(this,"User created successfully", Toast.LENGTH_SHORT).show()
+        startActivity(intent)
     }
 
 

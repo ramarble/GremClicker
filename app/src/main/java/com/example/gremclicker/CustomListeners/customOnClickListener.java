@@ -1,4 +1,4 @@
-package com.example.gremclicker.Logic;
+package com.example.gremclicker.CustomListeners;
 
 
 import android.graphics.Bitmap;
@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.example.gremclicker.Currency.Currency;
 
-class customOnClickListener implements View.OnTouchListener {
+public class customOnClickListener implements View.OnTouchListener {
     static int currentFrame = 0;
     static int frameAdvance(int currentFrame) {
         if (currentFrame + 1 > 12) {

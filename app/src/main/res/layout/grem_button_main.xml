@@ -6,6 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".ViewActivities.MainActivity">
 
+    <include layout="@layout/side_layout_upgrades"></include>
+
+
     <TextView
         android:id="@+id/currencyDisplay"
         android:layout_width="wrap_content"
