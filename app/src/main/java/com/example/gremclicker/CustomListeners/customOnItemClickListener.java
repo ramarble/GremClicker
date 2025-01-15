@@ -21,10 +21,8 @@ public class customOnItemClickListener implements AdapterView.OnItemClickListene
 
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.e("user clicked", "position : " + position + "\n id: " + id);
         Intent intent = new Intent(activity.getBaseContext(), GameScreen.class);
 
         //Has to be serializable to be sent over!

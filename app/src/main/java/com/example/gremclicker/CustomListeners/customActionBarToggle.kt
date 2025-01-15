@@ -5,7 +5,7 @@ import android.widget.ImageView
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.gremclicker.R
 
-class customDrawerListener(act: Activity) : DrawerLayout.DrawerListener {
+class CustomDrawerListener(act: Activity) : DrawerLayout.DrawerListener {
 
     var drawer: DrawerLayout = act.findViewById(R.id.drawer_layout)
     var grem = act.findViewById<ImageView>(R.id.animatedGrem)

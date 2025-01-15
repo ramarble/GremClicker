@@ -21,7 +21,7 @@ import com.example.gremclicker.Threads.RandomOtomoRainThread
 import com.example.gremclicker.Threads.TextUpdateThread
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
-import customDrawerListener
+import CustomDrawerListener
 
 
 class GameScreen: AppCompatActivity() {
@@ -96,7 +96,7 @@ class GameScreen: AppCompatActivity() {
         supportActionBar?.title = "Upgrades"
 
         //Cooked this myself
-        val cabt = customDrawerListener(this)
+        val cabt = CustomDrawerListener(this)
         drawerLayout.addDrawerListener(cabt)
 
         val navView = findViewById<NavigationView>(R.id.navigation_view)
